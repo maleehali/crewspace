@@ -1,18 +1,16 @@
-require('dotenv').config(); // Load environment variables from .env file
-const { Client } = require('pg'); // Import pg Client to connect to PostgreSQL
+require('dotenv').config();
+const { Client } = require('pg');
 
-// Create a new client using the DATABASE_URL from .env
+// Determine if SSL is required
+const ssl = process.env.DATABASE_URL.includes("render.com") ? { rejectUnauthorized: false } : false;
+
 const client = new Client({
-  connectionString: process.env.DATABASE_URL, // Reference the DATABASE_URL from the .env file
-  ssl: {
-    rejectUnauthorized: false // Enables SSL without verifying the server's certificate
-  }
+  connectionString: process.env.DATABASE_URL,
+  ssl: ssl,
 });
 
-// Connect to the database
 client.connect()
   .then(() => console.log('Connected to PostgreSQL'))
   .catch(err => console.error('Connection error', err.stack));
 
-// Export the client so other parts of your app can use it
 module.exports = client;
