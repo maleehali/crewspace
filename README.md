@@ -97,3 +97,12 @@ Inquirer: CLI prompts for interacting with users
 PostgreSQL: Relational database to manage employee, role, and department data
 License
 This project is licensed under the MIT License.
+
+### Walkthrough Video
+[Watch the Walkthrough video here!](https://drive.google.com/file/d/1Sn2F7ewDlXb7qxy7O03-XxScp2STurDH/view?usp=sharing)
+
+### GitHub Repository
+[GitHub Repository Link](https://github.com/maleehali/crewspace)
+
+
+Render Deployment Link:
