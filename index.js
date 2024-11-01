@@ -1,6 +1,8 @@
-const inquirer = require('inquirer');
-const client = require('./db/connection');
+// Import necessary modules
+const inquirer = require('inquirer'); // For command-line prompts
+const client = require('./db/connection'); // Database connection
 
+// Main menu function that prompts user for an action
 function mainMenu() {
     inquirer.prompt([
         {
@@ -23,6 +25,7 @@ function mainMenu() {
             ]
         }
     ]).then(answer => {
+        // Perform action based on user selection
         switch (answer.action) {
             case 'View All Departments':
                 viewAllDepartments();
@@ -45,7 +48,7 @@ function mainMenu() {
             case 'Update Employee Role':
                 updateEmployeeRole();
                 break;
-            case 'Update Employee Manager': 
+            case 'Update Employee Manager':
                 updateEmployeeManager();
                 break;
             case 'View Employees by Manager':
@@ -58,26 +61,29 @@ function mainMenu() {
                 deleteEmployee();
                 break;
             case 'Exit':
-                client.end();
+                client.end(); // Close database connection
                 console.log('Goodbye!');
                 break;
         }
     });
 }
 
+// Initialize the application by displaying the main menu
 mainMenu();
 
+// Function to display all departments
 function viewAllDepartments() {
     client.query('SELECT * FROM department', (err, res) => {
         if (err) {
             console.error(err);
         } else {
-            console.table(res.rows);
+            console.table(res.rows); // Display departments in table format
             mainMenu();
         }
     });
 }
 
+// Function to display all roles with their associated departments
 function viewAllRoles() {
     client.query('SELECT role.id, role.title, role.salary, department.name AS department FROM role LEFT JOIN department ON role.department_id = department.id', 
     (err, res) => {
@@ -90,6 +96,7 @@ function viewAllRoles() {
     });
 }
 
+// Function to display all employees with their roles, departments, and manager IDs
 function viewAllEmployees() {
     client.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, manager_id FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id', 
     (err, res) => {
@@ -102,6 +109,7 @@ function viewAllEmployees() {
     });
 }
 
+// Function to add a new department to the database
 function addDepartment() {
     inquirer.prompt({
         name: 'name',
@@ -116,6 +124,7 @@ function addDepartment() {
     });
 }
 
+// Function to add a new role with title, salary, and department ID
 function addRole() {
     inquirer.prompt([
         {
@@ -144,6 +153,7 @@ function addRole() {
     });
 }
 
+// Function to add a new employee with name, role, and manager ID
 function addEmployee() {
     inquirer.prompt([
         {
@@ -178,6 +188,7 @@ function addEmployee() {
     });
 }
 
+// Function to update an employee's role
 function updateEmployeeRole() {
     inquirer.prompt([
         {
@@ -201,6 +212,7 @@ function updateEmployeeRole() {
     });
 }
 
+// Function to update an employee's manager
 function updateEmployeeManager() {
     client.query('SELECT id, first_name, last_name FROM employee', (err, res) => {
         if (err) throw err;
@@ -229,6 +241,7 @@ function updateEmployeeManager() {
     });
 }
 
+// Function to view employees grouped by their manager
 function viewEmployeesByManager() {
     const query = `
         SELECT 
@@ -250,7 +263,7 @@ function viewEmployeesByManager() {
     });
 }
 
-
+// Function to view employees grouped by department
 function viewEmployeesByDepartment() {
     const query = `
         SELECT 
@@ -272,9 +285,8 @@ function viewEmployeesByDepartment() {
     });
 }
 
-
+// Function to delete an employee from the database
 function deleteEmployee() {
-    // Query to retrieve all employees
     client.query('SELECT id, first_name, last_name FROM employee', (err, res) => {
         if (err) {
             console.error('Error fetching employees:', err);
@@ -282,7 +294,6 @@ function deleteEmployee() {
             return;
         }
         
-        // Map the employees for inquirer choices
         const employees = res.rows.map(emp => ({ name: `${emp.first_name} ${emp.last_name}`, value: emp.id }));
         
         inquirer.prompt([
@@ -304,4 +315,3 @@ function deleteEmployee() {
         });
     });
 }
-
